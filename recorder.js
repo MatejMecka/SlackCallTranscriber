@@ -12,12 +12,12 @@ async function login(page){
 function platform(platform){
 	if(platform == "darwin"){
 		// Only Video So far
-		return 'ffmpeg -f avfoundation -i "1" ' + config.fileName;
+		return 'ffmpeg -f avfoundation -i "' + config.videoDevice + ':' + config.audioDevice + '" ' + config.fileName;
 	}
 
 	else if(platform == "linux"){
 		// Only Video so far. 
-		return "ffmpeg -f x11grab -i " + config.fileName
+		return 'ffmpeg -video_size' + config.videoSize + ' -framerate ' + config.framerate + ' -f x11grab -i :0.0' + config.fileName
 	}
 
 	else{
@@ -29,6 +29,7 @@ function platform(platform){
 (async() => {
 
 	cmd = platform(os.platform())
+	console.log(cmd)
 	const browser = await puppeteer.launch({
 		'headless':false, 
 		args: ['--window-size=1200,1200', '--disable-infobars', '--start-fullscreen']
