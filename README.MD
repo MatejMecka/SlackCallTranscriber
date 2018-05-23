@@ -6,13 +6,13 @@ A Project that Aims to Record Slack Call and later using speech recognition to t
 * Puppeteer
 
 ### Mac OS X:
-	* SoundFlower
+   * SoundFlower
 	
 ### Linux:
-	* ALSA
+   * ALSA
 
 ### Windows:
-	* DirectShow
+   * DirectShow
 
 # Installation
 ` npm install package.json`
@@ -27,7 +27,7 @@ Start  the recorder using `node recorder.js`
 
 # Current Issues:
 * Puppeter Fails at Login
-	* ¯\_(ツ)_/¯  Fill it out Manually or Restart The Script.
+	* ¯\\\_(ツ)_/¯  Fill it out Manually or Restart The Script.
 
 
 
