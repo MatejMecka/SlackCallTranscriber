@@ -1,0 +1,29 @@
+{
+  "name": "slackcalltranscriber",
+  "version": "1.0.0",
+  "description": "A Project that Aims to Record Slack Call and later using speech recognition to transcribe them.",
+  "main": "recorder.js",
+  "dependencies": {
+    "puppeteer": "^1.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatejMecka/SlackCallTranscriber.git"
+  },
+  "keywords": [
+    "slack",
+    "call",
+    "transcriber",
+    "realtime"
+  ],
+  "author": "Matej Plavevski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatejMecka/SlackCallTranscriber/issues"
+  },
+  "homepage": "https://github.com/MatejMecka/SlackCallTranscriber#readme"
+}
