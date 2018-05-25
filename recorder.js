@@ -3,6 +3,16 @@ const config = require('./config.js');
 const { exec } = require('child_process');
 const os = require('os')
 
+async function callEnded(page){
+	const text = page.evaluate(() => document.querySelector('.scrape').textContent)
+	if(text == "This call has ended."){
+		return true
+	}
+	else{
+		return false
+	}
+}
+
 async function login(page){
 	await page.type(config.emailField, config.email)
 	await page.type(config.passwordField, config.password)
@@ -17,7 +27,7 @@ function platform(platform){
 
 	else if(platform == "linux"){
 		// Only Video so far. 
-		return 'ffmpeg -video_size' + config.videoSize + ' -framerate ' + config.framerate + ' -f x11grab -i :0.0' + config.fileName
+		return 'ffmpeg -video_size' + config.videoSize + ' -framerate ' + config.framerate + ' -f x11grab -i :0.0 -f alsa -i default -preset ultrafast -crf 0' + config.fileName
 	}
 
 	else{
@@ -27,9 +37,8 @@ function platform(platform){
 }
 
 (async() => {
-
+	console.log('Starting Recorder...')
 	cmd = platform(os.platform())
-	console.log(cmd)
 	const browser = await puppeteer.launch({
 		'headless':false, 
 		args: ['--window-size=1200,1200', '--disable-infobars', '--start-fullscreen']
@@ -39,6 +48,7 @@ function platform(platform){
     await page.goto(config.url);
     await page.setViewport({ width: config.displayWidth, height: config.displayHeight })
 
+    console.log('Logging in...')
    	login(page)
     await page.waitForNavigation({waitUntil: 'load'})
 
@@ -48,13 +58,15 @@ function platform(platform){
 	    console.log(error)
 	});
 
-    exec(cmd, (err, stdout, stderr) => {
-	  if (err) {
-	    return;
-	  }
-	  console.log(`stdout: ${stdout}`);
-	  console.log(`stderr: ${stderr}`);
-	});
+    setInterval(
+    	function(){
+    		if(callEnded(page)){
+    			console.log('Call Ended. Exiting...')
+    			browser.close();
+    			process.exit(0);
+    		}
+    	},2000
+    )
 
 
 })()
