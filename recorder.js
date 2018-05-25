@@ -2,13 +2,19 @@ const puppeteer = require('puppeteer');
 const config = require('./config.js');
 const { exec } = require('child_process');
 const os = require('os')
+var fs = require('fs');
 
 async function callEnded(page){
-	const text = page.evaluate(() => document.querySelector('.scrape').textContent)
-	if(text == "This call has ended."){
+	const text = await page.evaluate(() => document.querySelector('#terminal_line').innerText)
+	console.log(text)
+	if(text == "This call has ended.\n\n"){
 		return true
 	}
 	else{
+		const messageBox = await page.evaluate(() => document.querySelector('#info_container > div.calls_notification_wrapper.show > span > span').innerText)
+		if(messageBox == "Close the window (⌘-W) to end the call"){
+			return true
+		}
 		return false
 	}
 }
@@ -52,22 +58,35 @@ function platform(platform){
    	login(page)
     await page.waitForNavigation({waitUntil: 'load'})
 
+
     exec(cmd, function(error, stdout, stderr) {
-	    console.log(stdout)  		
-	    console.log(stderr)
-	    console.log(error)
+    	if(error){
+    		console.error('There was an error running FFMPEG')
+    		console.error(stderr)
+    		console.error(error)
+    		browser.close();
+    		process.exit(1);
+    	}
+    	else{
+	    	console.log(stdout) 
+		}
 	});
 
-    setInterval(
-    	function(){
-    		if(callEnded(page)){
-    			console.log('Call Ended. Exiting...')
-    			browser.close();
-    			process.exit(0);
-    		}
-    	},2000
-    )
+    setInterval(async() => {
 
+    	await callEnded(page).then(function(response){
+    		if(response){
+    			console.log('Call Ended! Exiting...')
+    			browser.close();
+    			process.exit(0)
+    		}
+    		else{
+    			console.log('Call is still on!')
+    		}
+    	}).catch(function(error){
+    		console.error(error)
+    	})
+    },2000)
 
 })()
 
